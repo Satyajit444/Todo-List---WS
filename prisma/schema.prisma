@@ -14,7 +14,7 @@ datasource db {
 }
 
 model Todo {
-    id          String    @id @default(uuid())
+    id          Int       @id @default(autoincrement())
     title       String
     description String
     status      Status    @default(pending)
@@ -22,7 +22,6 @@ model Todo {
     dueDate     DateTime? // Nullable in case there's no deadline
     createdAt   DateTime  @default(now())
     updatedAt   DateTime  @updatedAt // Tracks updates
-    order       Int       @default(0) // Used for task reordering
 }
 
 enum Status {

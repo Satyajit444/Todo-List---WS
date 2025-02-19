@@ -1,7 +1,10 @@
+"use client"
+
+import CreateTodo from "@/components/CreateTodo";
 import React from "react";
 
 const Create = () => {
-  return <div>Create</div>;
+  return <CreateTodo />;
 };
 
 export default Create;

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import AuthWrapper from "@/components/AuthWrapper";
 import ClientProvider from "@/components/ClientProvider";
+import ThemeProvider from "@/components/ThemeProvider"; 
 
 export const metadata: Metadata = {
   title: "My Todo App",
@@ -15,9 +16,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <body className="dark:bg-slate-800 dark:text-white">
         <ClientProvider>
-          <AuthWrapper>{children}</AuthWrapper>
+          <ThemeProvider>
+            <AuthWrapper>{children}</AuthWrapper>
+          </ThemeProvider>
         </ClientProvider>
       </body>
     </html>

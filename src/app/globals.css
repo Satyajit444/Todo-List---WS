@@ -2,8 +2,66 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400; /* Regular */
+  src: url("/assets/fonts/inter_regular.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 500; /* Medium */
+  src: url("/assets/fonts/inter_medium.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 600; /* SemiBold */
+  src: url("/assets/fonts/inter_semibold.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 700; /* Bold */
+  src: url("/assets/fonts/inter_bold.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Lexend";
+  font-weight: 700; /* Bold */
+  font-style: normal;
+  src: url("/assets/fonts/Lexend-Bold.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Lexend";
+  font-weight: 600; /* SemiBold */
+  font-style: normal;
+  src: url("/assets/fonts/Lexend-SemiBold.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Lexend";
+  font-weight: 400; /* Regular */
+  font-style: normal;
+  src: url("/assets/fonts/Lexend-Regular.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Lexend";
+  font-weight: 500; /* Medium */
+  font-style: normal;
+  src: url("/assets/fonts/Lexend-Medium.woff2") format("woff2");
+}
+.font-lexend {
+  font-family: Lexend, Inter, sans-serif;
+}
 html,
 body {
+  font-family: Lexend, Inter, sans-serif;
   @apply box-border m-0 p-0;
 }
 /* Default light theme styles */
@@ -27,8 +85,23 @@ body.dark button {
   background-color: #333;
   color: white;
 }
-
-body button {
-  background-color: white;
-  color: black;
+/* WebKit Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 6px;  /* Slim width */
+  height: 6px;
 }
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;  /* Light grey track */
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #a0a0a0;  /* Grey scrollbar */
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #888;  /* Darker grey on hover */
+}
+
