@@ -40,7 +40,6 @@ export const createOrUpdateTodo = async (
 // Delete Todo
 export const deleteTodo = async (id: string): Promise<void> => {
   try {
-    console.log("Deleting todo with ID:", id);
 
     const response = await fetch(`/api/todo/${id}`, {
       method: "DELETE",

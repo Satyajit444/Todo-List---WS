@@ -43,6 +43,7 @@ const useFilterSort = (todos: Todo[]) => {
 
   return {
     filteredTodos,
+    setFilteredTodos,
     setFilters,
     setSortBy,
   };

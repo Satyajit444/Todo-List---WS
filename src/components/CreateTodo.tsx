@@ -66,7 +66,6 @@ const CreateTodo: React.FC<CreateTodoProps> = ({
 
     try {
       setIsLoading(true); // Show loading state
-      console.log("formData", formData);
 
       const updatedTodo = await createOrUpdateTodo(formData); // API call
 

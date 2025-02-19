@@ -13,7 +13,6 @@ const EditTodoPage = () => {
       try {
         const response = await fetch(`/api/todo/${id}`); // Fetch the todo by ID
         const data = await response.json();
-        console.log("🚀 ~ fetchTodo ~ data:", data);
         setTodo(data);
       } catch (error) {
         console.error("Error fetching todo:", error);

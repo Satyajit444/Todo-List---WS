@@ -33,7 +33,7 @@ export const TodosTable = () => {
         setTodos(data);
       } catch (err) {
         console.log(err);
-        
+
         setError("Failed to fetch tasks.");
       } finally {
         setLoading(false);
@@ -43,15 +43,20 @@ export const TodosTable = () => {
     loadTodos();
   }, []);
 
-  const handleDelete = useCallback(async (id: string) => {
+  const handleDelete = async (id: string) => {
+    console.log("triggered");
+    setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
+    setFilteredTodos((prevFilteredTodos) =>
+      prevFilteredTodos.filter((todo) => todo.id !== id)
+    );
+
     try {
       await deleteTodo(id);
-      setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
     } catch (error) {
       console.error("Error deleting todo:", error);
       setError("Failed to delete task.");
     }
-  }, []);
+  };
 
   const handleEdit = useCallback(
     (id: string) => {
@@ -63,18 +68,19 @@ export const TodosTable = () => {
   // Drag-and-drop setup
   const sensors = useSensors(useSensor(PointerSensor));
 
-const handleDragEnd = (event: DragEndEvent) => {
-  const { active, over } = event;
-  if (!over || active.id === over.id) return;
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
 
-  const oldIndex = todos.findIndex((todo) => todo.id === active.id);
-  const newIndex = todos.findIndex((todo) => todo.id === over.id);
+    const oldIndex = filteredTodos.findIndex((todo) => todo.id === active.id);
+    const newIndex = filteredTodos.findIndex((todo) => todo.id === over.id);
 
-  setTodos(arrayMove(todos, oldIndex, newIndex));
-};
+    setFilteredTodos(arrayMove(filteredTodos, oldIndex, newIndex));
+  };
 
   // Use custom hook for filtering and sorting
-  const { filteredTodos, setFilters, setSortBy } = useFilterSort(todos);
+  const { filteredTodos, setFilteredTodos, setFilters, setSortBy } =
+    useFilterSort(todos);
 
   return (
     <div className="rounded-lg border border-stroke shadow-md max-h-[72vh] overflow-auto">
@@ -212,7 +218,7 @@ const SortableRow = ({
       <td className="px-6 py-4">{task.status}</td>
       <td className="px-6 py-4">{task.priority}</td>
       <td className="px-6 py-4 ">{task.dueDate}</td>
-      <td className="px-6 py-4 flex space-x-4">
+      <td className="px-6 py-4 flex space-x-4" {...listeners} {...attributes}>
         <button
           onClick={() => handleEdit(task.id as string)}
           className="text-gray-600 hover:text-blue-800"
@@ -220,7 +226,10 @@ const SortableRow = ({
           ✏️
         </button>
         <button
-          onClick={() => handleDelete(task.id as string)}
+          onClick={() => {
+            console.log("triggered on click");
+            handleDelete(task.id as string);
+          }}
           className="text-gray-600 hover:text-red-800"
         >
           🗑️
