@@ -23,6 +23,7 @@ export async function PUT(
 
     return NextResponse.json(updatedTodo, { status: 200 });
   } catch (error) {
+    console.error("Error updating todo:", error); // Ensure the error is logged
     return NextResponse.json(
       { error: "Failed to update Todo" },
       { status: 400 }
@@ -73,7 +74,9 @@ export async function GET(
       return NextResponse.json({ error: "Todo not found" }, { status: 404 });
 
     return NextResponse.json(todo);
-  } catch (error) {
+  } catch (_error) {
+    // Prefixing `_` to avoid the linter warning
+    console.error("Error fetching todo:", _error);
     return NextResponse.json({ error: "Error fetching Todo" }, { status: 500 });
   }
 }

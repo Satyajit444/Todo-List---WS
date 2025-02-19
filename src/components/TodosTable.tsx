@@ -9,6 +9,7 @@ import {
   useSensor,
   useSensors,
   PointerSensor,
+  DragEndEvent,
 } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -62,15 +63,15 @@ export const TodosTable = () => {
   // Drag-and-drop setup
   const sensors = useSensors(useSensor(PointerSensor));
 
-  const handleDragEnd = (event: any) => {
-    const { active, over } = event;
-    if (!over || active.id === over.id) return;
+const handleDragEnd = (event: DragEndEvent) => {
+  const { active, over } = event;
+  if (!over || active.id === over.id) return;
 
-    const oldIndex = todos.findIndex((todo) => todo.id === active.id);
-    const newIndex = todos.findIndex((todo) => todo.id === over.id);
+  const oldIndex = todos.findIndex((todo) => todo.id === active.id);
+  const newIndex = todos.findIndex((todo) => todo.id === over.id);
 
-    setTodos(arrayMove(todos, oldIndex, newIndex));
-  };
+  setTodos(arrayMove(todos, oldIndex, newIndex));
+};
 
   // Use custom hook for filtering and sorting
   const { filteredTodos, setFilters, setSortBy } = useFilterSort(todos);
