@@ -31,6 +31,8 @@ export const TodosTable = () => {
         const data = await fetchTodos();
         setTodos(data);
       } catch (err) {
+        console.log(err);
+        
         setError("Failed to fetch tasks.");
       } finally {
         setLoading(false);

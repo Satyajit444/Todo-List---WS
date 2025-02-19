@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { SessionProvider, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
 import Header from "./Header";
 import Footer from "./Footer";

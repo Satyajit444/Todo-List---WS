@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 
 interface CreateTodoProps {
   todoToEdit?: Todo;
-  onSave?: (todo: any) => void;
+  onSave?: (todo: Todo) => void;
   onDelete?: (id: number) => void;
 }
 
