@@ -12,6 +12,9 @@ const EditTodoPage = () => {
     const fetchTodo = async () => {
       try {
         const response = await fetch(`/api/todo/${id}`); // Fetch the todo by ID
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status} ${response.statusText}`);
+        }
         const data = await response.json();
         setTodo(data);
       } catch (error) {
@@ -23,7 +26,16 @@ const EditTodoPage = () => {
   }, [id]);
 
   return (
-    <div>{todo ? <CreateTodo todoToEdit={todo} /> : <p>Loading...</p>}</div>
+    <div>
+      {todo ? (
+        <CreateTodo todoToEdit={todo} />
+      ) : (
+        <div className="flex flex-col items-center justify-center h-screen">
+          <div className="animate-spin rounded-full h-10 w-10 border-4 border-blue-500 border-t-transparent"></div>
+          <p className="mt-2 text-gray-500">Loading...</p>
+        </div>
+      )}
+    </div>
   );
 };
 

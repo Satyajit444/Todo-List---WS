@@ -19,8 +19,8 @@ const CreateTodo: React.FC<CreateTodoProps> = ({
   const [formData, setFormData] = useState<Todo>({
     title: "",
     description: "",
-    status: "in_progress",
-    priority: "medium",
+    status: undefined,
+    priority: undefined,
     dueDate: "",
   });
 
@@ -44,6 +44,7 @@ const CreateTodo: React.FC<CreateTodoProps> = ({
     Medium: "medium",
     High: "high",
   };
+
   useEffect(() => {
     if (todoToEdit) {
       setFormData(todoToEdit);
@@ -61,87 +62,74 @@ const CreateTodo: React.FC<CreateTodoProps> = ({
     setFormData({ ...formData, [field]: mappedValue });
     setDropdowns({ ...dropdowns, [field]: false });
   };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      setIsLoading(true); // Show loading state
+      setIsLoading(true);
 
-      const updatedTodo = await createOrUpdateTodo(formData); // API call
+      const updatedTodo = await createOrUpdateTodo(formData);
 
-      onSave?.(updatedTodo); // Pass the created todo back to parent component
-      setFormData({
-        title: "",
-        description: "",
-        status: "in_progress",
-        priority: "low",
-        dueDate: "",
-      });
+      onSave?.(updatedTodo);
+      setFormData({ title: "", description: "", status: undefined, priority: undefined, dueDate: "" });
       showToast("Todo saved successfully!", "success");
+
+      router.push("/"); // Redirect after successful creation
     } catch (error) {
       console.error("Error creating todo:", error);
       showToast("Error creating todo!", "error");
-      router.push("/");
     } finally {
-      setIsLoading(false); // Remove loading state
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-6 shadow-xl rounded-lg  mt-10">
+    <div className="max-w-2xl mx-auto p-6 shadow-xl rounded-lg mt-10">
       <h2 className="text-2xl font-semibold text-gray-800 dark:text-white mb-4">
         {todoToEdit ? "Edit Task" : "Create New Task"}
       </h2>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Title */}
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
             Title
           </label>
           <input
-          required
+            required
             type="text"
             name="title"
             value={formData.title}
-            onChange={(e) =>
-              setFormData({ ...formData, title: e.target.value })
-            }
+            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
             className="mt-1 w-full p-2 border rounded-lg dark:bg-gray-800 dark:border-gray-600 dark:text-white"
             placeholder="Enter task title"
           />
         </div>
 
-        {/* Description */}
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
             Description
           </label>
           <textarea
-          required
+            required
             name="description"
             value={formData.description}
-            onChange={(e) =>
-              setFormData({ ...formData, description: e.target.value })
-            }
+            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
             rows={3}
             className="mt-1 w-full p-2 border rounded-lg dark:bg-gray-800 dark:border-gray-600 dark:text-white"
             placeholder="Enter task description"
           ></textarea>
         </div>
 
-        {/* Status Dropdown */}
         <div className="relative">
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
             Status
           </label>
           <div
             className="mt-1 w-full p-2 border rounded-lg dark:bg-gray-800 dark:border-gray-600 dark:text-white flex justify-between items-center cursor-pointer"
-            onClick={() =>
-              setDropdowns({ ...dropdowns, status: !dropdowns.status })
-            }
+            onClick={() => setDropdowns({ ...dropdowns, status: !dropdowns.status })}
           >
-            {formData.status}
+            {formData.status || "Select Status"}
             <ChevronDownIcon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
           </div>
           {dropdowns.status && (
@@ -159,18 +147,15 @@ const CreateTodo: React.FC<CreateTodoProps> = ({
           )}
         </div>
 
-        {/* Priority Dropdown */}
         <div className="relative">
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
             Priority
           </label>
           <div
             className="mt-1 w-full p-2 border rounded-lg dark:bg-gray-800 dark:border-gray-600 dark:text-white flex justify-between items-center cursor-pointer"
-            onClick={() =>
-              setDropdowns({ ...dropdowns, priority: !dropdowns.priority })
-            }
+            onClick={() => setDropdowns({ ...dropdowns, priority: !dropdowns.priority })}
           >
-            {formData.priority}
+            {formData.priority || "Select Priority"}
             <ChevronDownIcon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
           </div>
           {dropdowns.priority && (
@@ -188,35 +173,27 @@ const CreateTodo: React.FC<CreateTodoProps> = ({
           )}
         </div>
 
-        {/* Due Date */}
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
             Due Date
           </label>
           <input
-          required
+            required
             type="date"
             name="dueDate"
             value={formData.dueDate}
-            onChange={(e) =>
-              setFormData({ ...formData, dueDate: e.target.value })
-            }
+            onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
             className="mt-1 w-full p-2 border rounded-lg dark:bg-gray-800 dark:border-gray-600 dark:text-white"
           />
         </div>
 
-        {/* Buttons */}
         <div className="flex justify-between">
           <button
             type="submit"
             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition duration-200"
-            disabled={isLoading} // Disable button during API call
+            disabled={isLoading}
           >
-            {isLoading
-              ? "Creating..."
-              : todoToEdit
-              ? "Update Task"
-              : "Create Task"}
+            {isLoading ? "Creating..." : todoToEdit ? "Update Task" : "Create Task"}
           </button>
 
           {todoToEdit && onDelete && (

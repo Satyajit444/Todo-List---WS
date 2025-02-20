@@ -3,6 +3,8 @@ import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { fetchTodos, deleteTodo } from "@/lib/api";
 import { Todo } from "@/types/types";
+import moment from "moment";
+
 import {
   DndContext,
   closestCenter,
@@ -19,6 +21,44 @@ import {
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import useFilterSort from "@/hooks/useFilterSort";
+import { MdDragIndicator } from "react-icons/md";
+import { showToast } from "@/utils/toast";
+
+// Define types explicitly
+type Status = "pending" | "in_progress" | "completed";
+type Priority = "low" | "medium" | "high";
+
+// Status Formatting & Colors
+const statusMap: Record<Status, string> = {
+  pending: "Pending",
+  in_progress: "In Progress",
+  completed: "Completed",
+};
+
+const statusColors: Record<Status, string> = {
+  pending: "bg-yellow-200 text-yellow-800",
+  in_progress: "bg-blue-200 text-blue-800",
+  completed: "bg-green-200 text-green-800",
+};
+
+const formatStatus = (status?: Status): string =>
+  statusMap[status ?? "pending"];
+
+// Priority Formatting & Colors
+const priorityMap: Record<Priority, string> = {
+  low: "Low",
+  medium: "Medium",
+  high: "High",
+};
+
+const priorityColors: Record<Priority, string> = {
+  low: "bg-green-200 text-green-800",
+  medium: "bg-orange-200 text-orange-800",
+  high: "bg-red-200 text-red-800",
+};
+
+const formatPriority = (priority?: Priority): string =>
+  priorityMap[priority ?? "low"];
 
 export const TodosTable = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
@@ -52,9 +92,11 @@ export const TodosTable = () => {
 
     try {
       await deleteTodo(id);
+      showToast("Todo deleted successfully!", "success");
     } catch (error) {
       console.error("Error deleting todo:", error);
       setError("Failed to delete task.");
+      showToast("Failed to delete task!", "error");
     }
   };
 
@@ -88,7 +130,7 @@ export const TodosTable = () => {
         <h4 className="text-lg font-semibold ">Task List</h4>
         <div className="flex flex-wrap gap-4 ">
           <select
-            className="p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+            className="p-2 border dark:bg-slate-800 border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
             onChange={(e) =>
               setFilters((prevFilters) => ({
                 ...prevFilters,
@@ -103,7 +145,7 @@ export const TodosTable = () => {
           </select>
 
           <select
-            className="p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+            className="p-2 border border-gray-300 dark:bg-slate-800 rounded-md focus:ring-2 focus:ring-blue-500"
             onChange={(e) =>
               setFilters((prevFilters) => ({
                 ...prevFilters,
@@ -118,7 +160,7 @@ export const TodosTable = () => {
           </select>
 
           <select
-            className="p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+            className="p-2 border dark:bg-slate-800 border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
             onChange={(e) => setSortBy(e.target.value)}
           >
             <option value="title">Sort by Title</option>
@@ -153,8 +195,9 @@ export const TodosTable = () => {
             strategy={verticalListSortingStrategy}
           >
             <table className="w-full border-collapse table-fixed">
-              <thead>
+              <thead className="border-b">
                 <tr className="text-left text-sm">
+                  <th className="px-6 py-3 w-20">{""}</th>
                   {[
                     "Title",
                     "Description",
@@ -206,19 +249,40 @@ const SortableRow = ({
   };
 
   return (
-    <tr
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...listeners}
-      className="border-b border-stroke text-sm cursor-grab"
-    >
+    <tr style={style} className="border-b border-stroke text-sm">
+      <td
+        ref={setNodeRef}
+        {...attributes}
+        {...listeners}
+        className="cursor-grab px-4 w-20"
+      >
+        <MdDragIndicator />
+      </td>
       <td className="px-6 py-4">{task.title}</td>
-      <td className="px-6 py-4  hidden md:table-cell">{task.description}</td>
-      <td className="px-6 py-4">{task.status}</td>
-      <td className="px-6 py-4">{task.priority}</td>
-      <td className="px-6 py-4 ">{task.dueDate}</td>
-      <td className="px-6 py-4 flex space-x-4" {...listeners} {...attributes}>
+      <td className="px-6 py-4">{task.description}</td>
+      <td>
+        <span
+          className={`px-3 py-1 text-center rounded-full ${
+            statusColors[task.status ?? "pending"]
+          }`}
+        >
+          {formatStatus(task.status)}
+        </span>
+      </td>
+      <td>
+        {" "}
+        <span
+          className={`px-3 py-1 text-center rounded-full ${
+            priorityColors[task.priority ?? "low"]
+          }`}
+        >
+          {formatPriority(task.priority)}
+        </span>
+      </td>
+      <td className="px-6 py-4">
+        {moment(task.dueDate).format("MMM D, YYYY")}
+      </td>
+      <td className="px-6 py-4 flex space-x-4">
         <button
           onClick={() => handleEdit(task.id as string)}
           className="text-gray-600 hover:text-blue-800"
@@ -226,10 +290,7 @@ const SortableRow = ({
           ✏️
         </button>
         <button
-          onClick={() => {
-            console.log("triggered on click");
-            handleDelete(task.id as string);
-          }}
+          onClick={() => handleDelete(task.id as string)}
           className="text-gray-600 hover:text-red-800"
         >
           🗑️
